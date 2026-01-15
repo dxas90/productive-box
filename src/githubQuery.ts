@@ -1,11 +1,27 @@
-export default async function (query: string): Promise<any> {
-  const res = await fetch('https://api.github.com/graphql', {
+/**
+ * Execute a GitHub GraphQL query
+ * @param query - The GraphQL query string
+ * @returns Promise with the query response
+ */
+export default async function githubQuery(
+  query: string,
+): Promise<{ data?: unknown; message?: string; [key: string]: unknown }> {
+  if (!process.env.GH_TOKEN) {
+    throw new Error('GH_TOKEN environment variable is required');
+  }
+
+  const response = await fetch('https://api.github.com/graphql', {
     method: 'POST',
     headers: {
       Authorization: `bearer ${process.env.GH_TOKEN}`,
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ query }).replace(/\\n/g, ''),
+    body: JSON.stringify({ query }),
   });
 
-  return res.json();
+  if (!response.ok) {
+    throw new Error(`GitHub API request failed: ${response.status} ${response.statusText}`);
+  }
+
+  return (await response.json()) as { data?: unknown; message?: string; [key: string]: unknown };
 }

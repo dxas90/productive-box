@@ -11,20 +11,24 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node_version: [20.x]
     steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node_version }}
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: ${{ matrix.node_version }}
-      - name: build
-        run: |
-          yarn install
-          yarn build
-      - name: commit change & push
+          node-version-file: '.nvmrc'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Commit change & push
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
@@ -32,8 +36,9 @@ jobs:
           git add .
           git commit --allow-empty -m ":robot: build automatically"
           git push
-      - name: repository dispatch
-        uses: peter-evans/repository-dispatch@v2
+
+      - name: Repository dispatch
+        uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.GH_TOKEN }}
           event-type: build-event

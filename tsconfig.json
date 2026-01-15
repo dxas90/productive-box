@@ -1,18 +1,24 @@
 {
   "compilerOptions": {
-    "target": "es2020",
-    "lib": ["esnext"],
-    "module": "esnext",
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "strict": true,
     "esModuleInterop": true,
-    "moduleResolution": "node",
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "noImplicitAny": true,
-    "allowJs": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowJs": false,
     "noEmit": false,
     "outDir": "dist",
     "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node"]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
